@@ -36,7 +36,6 @@ kafka:
     logRetentionCheckIntervalMs: 300000
   storage:
     size: 10Gi
-    class: vsphere-csi-thick
     deleteClaim: false
   entityOperator:
     topicOperator: {}

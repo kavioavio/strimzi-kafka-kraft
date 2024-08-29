@@ -1,0 +1,51 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .Release.Name }}-kafka
+  namespace: {{ .Values.namespace }}
+spec:
+  kafka:
+    version: {{ .Values.kafka.version }}
+    replicas: {{ .Values.kafka.replicas }}
+    listeners:
+      - name: plain
+        port: {{ .Values.kafka.listeners.plain.port }}
+        type: {{ .Values.kafka.listeners.plain.type }}
+        tls: {{ .Values.kafka.listeners.plain.tls }}
+      - name: external
+        port: {{ .Values.kafka.listeners.external.port }}
+        type: {{ .Values.kafka.listeners.external.type }}
+        tls: {{ .Values.kafka.listeners.external.tls }}
+    config:
+      process.roles: {{ .Values.kafka.config.processRoles }}
+      node.id: {{ .Values.kafka.config.nodeId }}
+      controller.quorum.voters: {{ .Values.kafka.config.controllerQuorumVoters }}
+      listeners: {{ .Values.kafka.config.listeners }}
+      inter.broker.listener.name: {{ .Values.kafka.config.interBrokerListenerName }}
+      listener.security.protocol.map: {{ .Values.kafka.config.listenerSecurityProtocolMap }}
+      controller.listener.names: {{ .Values.kafka.config.controllerListenerNames }}
+      num.network.threads: {{ .Values.kafka.config.numNetworkThreads }}
+      num.io.threads: {{ .Values.kafka.config.numIoThreads }}
+      socket.send.buffer.bytes: {{ .Values.kafka.config.socketSendBufferBytes }}
+      socket.receive.buffer.bytes: {{ .Values.kafka.config.socketReceiveBufferBytes }}
+      socket.request.max.bytes: {{ .Values.kafka.config.socketRequestMaxBytes }}
+      log.dirs: {{ .Values.kafka.config.logDirs }}
+      num.partitions: {{ .Values.kafka.config.numPartitions }}
+      default.replication.factor: {{ .Values.kafka.config.defaultReplicationFactor }}
+      offsets.topic.replication.factor: {{ .Values.kafka.config.offsetsTopicReplicationFactor }}
+      transaction.state.log.replication.factor: {{ .Values.kafka.config.transactionStateLogReplicationFactor }}
+      transaction.state.log.min.isr: {{ .Values.kafka.config.transactionStateLogMinIsr }}
+      log.retention.hours: {{ .Values.kafka.config.logRetentionHours }}
+      log.segment.bytes: {{ .Values.kafka.config.logSegmentBytes }}
+      log.retention.check.interval.ms: {{ .Values.kafka.config.logRetentionCheckIntervalMs }}
+    storage:
+      type: persistent-claim
+      size: {{ .Values.kafka.storage.size }}
+      class: {{ .Values.kafka.storage.class }}
+      deleteClaim: {{ .Values.kafka.storage.deleteClaim }}
+  entityOperator:
+    topicOperator: {{ .Values.kafka.entityOperator.topicOperator }}
+    userOperator: {{ .Values.kafka.entityOperator.userOperator }}
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2

@@ -1,0 +1,43 @@
+namespace: kafka
+strimziOperatorVersion: '0.43.0'
+kafka:
+  version: '3.5.0'
+  replicas: 3
+  listeners:
+    plain:
+      port: 9092
+      type: internal
+      tls: false
+    external:
+      port: 9094
+      type: nodeport
+      tls: false
+  config:
+    processRoles: "broker,controller"
+    nodeId: 1
+    controllerQuorumVoters: "1@{{ .Release.Name }}-kafka-0.{{ .Release.Name }}-kafka-brokers.{{ .Values.namespace }}.svc:9093,2@{{ .Release.Name }}-kafka-1.{{ .Release.Name }}-kafka-brokers.{{ .Values.namespace }}.svc:9093,3@{{ .Release.Name }}-kafka-2.{{ .Release.Name }}-kafka-brokers.{{ .Values.namespace }}.svc:9093"
+    listeners: 'PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094'
+    interBrokerListenerName: "PLAINTEXT"
+    listenerSecurityProtocolMap: 'PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT'
+    controllerListenerNames: "CONTROLLER"
+    numNetworkThreads: 3
+    numIoThreads: 8
+    socketSendBufferBytes: 102400
+    socketReceiveBufferBytes: 102400
+    socketRequestMaxBytes: 104857600
+    logDirs: '/var/lib/kafka/data'
+    numPartitions: 1
+    defaultReplicationFactor: 3
+    offsetsTopicReplicationFactor: 3
+    transactionStateLogReplicationFactor: 3
+    transactionStateLogMinIsr: 2
+    logRetentionHours: 168
+    logSegmentBytes: 1073741824
+    logRetentionCheckIntervalMs: 300000
+  storage:
+    size: 10Gi
+    class: vsphere-csi-thick
+    deleteClaim: false
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
